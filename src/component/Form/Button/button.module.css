@@ -1,0 +1,33 @@
+.button {
+  padding: var(--margin-medium);
+  border: 0;
+  border-radius: var(--border-radius);
+  background: var(--bg-grey);
+  color: var(--col-grey);
+  margin-left: var(--margin-medium);
+  font-size: 1.4rem;
+}
+.tertiary {
+  background: rgb(130, 145, 244);
+}
+.secondary {
+  background: rgb(4, 129, 255);
+}
+.primary {
+  background: var(--bg-primary); /* rgb(45, 45, 249);*/
+  color: var(--col-primary); 
+  font-weight: bold;
+}
+.tertiary {
+  background: rgb(130, 145, 244);
+}
+.reset {
+  background: var(--button-reset);
+  color: var(--bg-card);
+}
+
+.button:hover {
+  background: var(--bg-hover); /* rgb(45, 45, 249);*/
+  color: var(--col-hover);
+  cursor: pointer;
+}

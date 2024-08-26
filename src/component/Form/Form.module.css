@@ -1,0 +1,32 @@
+.fieldset,
+.legend {
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+  border: 0;
+}
+.legend {
+  font-weight: bold;
+  margin: 0 0 var(--margin-medium);
+  background: var(--bg-legend);
+  color: var(--col-legend);
+  padding: var(--margin-large);
+  width: 100%;
+}
+.form {
+  width: 50%;
+  max-width: 450px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  margin: var(--margin-medium) auto 0 auto;
+  padding: 0 0 var(--margin-medium);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--margin-medium);
+
+}
+
+
