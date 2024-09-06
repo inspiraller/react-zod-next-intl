@@ -1,4 +1,10 @@
 {
+  "Generic": {
+    "close": "close",
+    "submit": "Submit",
+    "reset": "Reset",
+    "loading": "Loading. Please wait.."
+  },
   "HomePage": {
     "title": "Hello world!"
   },
@@ -9,8 +15,8 @@
     "email": "Email",
     "password": "Password",
     "confirmPassword": "Confirm Password",
-    "submit": "Submit",
-    "reset": "Reset"
+    "RegisterSuccess": "<p>Success. We have sent an email to <strong>${email}</strong>. </p><p>Please click the verification link provided, to complete your registration within 30 days.</p>",
+    "RegisterError": "<p><em>${error}</em>. </p>"
   },
   "zod": {
     "invalid_type": "Expected {expected}, received {received}",
@@ -116,8 +122,9 @@
         "not_inclusive": "Date must be smaller than {- maximum, datetime}"
       }
     },
-    "customValidation": { 
-      "confirmPassword_match": "Passwords do not match"
+    "customValidation": {
+      "confirmPassword_match": "Passwords do not match",
+      "username_no_at": "Username cannot include @ symbol"
     }
   }
 }

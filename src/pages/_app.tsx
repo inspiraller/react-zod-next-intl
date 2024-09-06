@@ -1,12 +1,10 @@
 import type { ReactElement, ReactNode } from "react";
 import type { NextPage } from "next";
-import { z } from "zod";
-import type { AppProps } from "next/app";
 
-import "@/app/global.css";
+import "@/app/globals.css";
 import { useRouter } from "next/router";
 import { NextIntlClientProvider } from "next-intl";
-import { createCustomErrorMap } from "@/libraries/zodCustomErrorMap";
+import { AppProps } from "next/app";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -16,13 +14,9 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-export const Layout = ({children}: {children: React.ReactNode}) => {
-  const zodCustomErrorMap = createCustomErrorMap();
-  z.setErrorMap(zodCustomErrorMap);
-  return children
-};
-export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+function App({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
+  console.log('_app stuff...')
   return (
     <NextIntlClientProvider
       locale={router.locale}
@@ -30,9 +24,9 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       timeZone="Europe/London"
       messages={pageProps.messages}
     >
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <Component {...pageProps} />
     </NextIntlClientProvider>
   );
 }
+
+export default App;

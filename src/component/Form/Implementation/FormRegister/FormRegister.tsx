@@ -39,7 +39,6 @@ export const FormRegister = () => {
 
   const {
     mutate,
-    isError,
     isSuccess,
     data: dataResponse,
   } = useMutateRegister();

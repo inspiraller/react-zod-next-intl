@@ -1,0 +1,15 @@
+.registerSuccess {
+  background: var(--col-success);
+  color: var(--col-white);
+  padding: 3rem;
+
+
+  p {
+    margin: 1.1rem 0 0;
+    font-size: 2rem;
+  }
+  strong {
+    border-bottom: 2px solid white;
+    text-decoration: underline;
+  }
+}

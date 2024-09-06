@@ -1,0 +1,13 @@
+.registerError {
+  background: var(--col-warning);
+  color: var(--col-white);
+  padding: 3rem;
+
+  p {
+    margin: 1.1rem 0 0;
+    font-size: 2rem;
+  }
+  em {
+
+  }
+}
