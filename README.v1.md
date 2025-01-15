@@ -299,7 +299,6 @@ export const FormRegister = () => {
   const { handleSubmit, reset, formState } = methods;
 
   const onSubmit = (values: PropsFormRegister) => {
-    console.log("submit...");
     mutate(values);
   };
 

@@ -5,7 +5,6 @@ import "@/app/globals.css";
 import { useRouter } from "next/router";
 import { NextIntlClientProvider } from "next-intl";
 import type { AppProps } from "next/app";
-import { Header } from "@/components/Header/Header";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -17,7 +16,6 @@ type AppPropsWithLayout = AppProps & {
 
 function App({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
-  console.log('_app stuff...')
   return (
     <NextIntlClientProvider
       locale={router.locale}
@@ -25,7 +23,6 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
       timeZone="Europe/London"
       messages={pageProps.messages}
     >
-      <Header {...pageProps} />
       <Component {...pageProps} />
     </NextIntlClientProvider>
   );
