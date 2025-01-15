@@ -3,10 +3,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {useTranslations} from 'next-intl';
 import styles from './Register.module.css';
 import { FormRegister } from "@/components/Form/Implementation/FormRegister/FormRegister";
+import withPageComponent from "@/hocs/withPageComponent";
 const queryClient = new QueryClient();
 
 
-export default function Register() {
+const Register = ()  => {
   const t = useTranslations('Register');
   const T_title = t('title');
 
@@ -24,13 +25,14 @@ export default function Register() {
 }
 
 
+/* eslint-enable @typescript-eslint/no-explicit-any */
 export async function getStaticProps(context: any) {
+  const locale = context.locale ?? 'en';
   return {
     props: {
-      // You can get the messages from anywhere you like. The recommended
-      // pattern is to put them in JSON files separated by locale and read
-      // the desired one based on the `locale` received from Next.js.
-      messages: (await import(`@/messages/${context.locale}.json`)).default
+      messages: (await import(`@/messages/${locale}.json`)).default
     }
   };
 }
+
+export default withPageComponent(Register);

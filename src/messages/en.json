@@ -5,8 +5,8 @@
     "reset": "Reset",
     "loading": "Loading. Please wait.."
   },
-  "HomePage": {
-    "title": "Hello world!"
+  "WithPageComponent": {
+    "title": "Hello from withPageComponent!"
   },
   "Register": {
     "title": "Register",
