@@ -4,7 +4,7 @@ import type { NextPage } from "next";
 import "@/app/globals.css";
 import { useRouter } from "next/router";
 import { NextIntlClientProvider } from "next-intl";
-import { AppProps } from "next/app";
+import type { AppProps } from "next/app";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -16,7 +16,6 @@ type AppPropsWithLayout = AppProps & {
 
 function App({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
-  console.log('_app stuff...')
   return (
     <NextIntlClientProvider
       locale={router.locale}

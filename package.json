@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest"
+    "test": "vitest",
+    "test:e2e": "playwright test -- react-app"
   },
   "dependencies": {
     "@hookform/error-message": "^2.0.1",
@@ -21,16 +22,17 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@types/node": "^22.5.4",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^19.0.7",
     "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^8",
     "eslint-config-next": "^14.2.8",
     "jsdom": "^25.0.0",
+    "playwright": "^1.49.1",
     "sass": "^1.78.0",
     "tsx": "^4.19.0",
     "typescript": "^5",

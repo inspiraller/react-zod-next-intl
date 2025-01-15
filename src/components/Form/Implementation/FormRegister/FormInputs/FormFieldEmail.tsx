@@ -15,7 +15,7 @@ export const FormFieldEmail = () => {
     <FormField
       type="email"
       label={t('email')}
-      placeholder="Email"
+      placeholder={t('email')}
       name="regEmail"
       register={register}
       errors={errors}

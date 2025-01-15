@@ -15,7 +15,7 @@ export const FormFieldUsername = () => {
     <FormField
       type="text"
       label={t('username')}
-      placeholder="username"
+      placeholder={t('username')}
       name="regUsername"
       register={register}
       errors={errors}
