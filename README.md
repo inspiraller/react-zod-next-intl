@@ -37,34 +37,8 @@ Enjoy!
 }
 
 ```
-2. **next.config.ts**
-```ts
-import createNextIntlPlugin from 'next-intl/plugin';
-const withNextIntl = createNextIntlPlugin();
-const nextConfig = {
-  i18n: {
-    locales: ['en'],
-    defaultLocale: 'en',
-  },
-};
 
-export default withNextIntl(nextConfig);
-```
-
-3. **i18n/request.ts**
-```ts
-import {getRequestConfig} from 'next-intl/server';
- 
-export default getRequestConfig(async () => {
-  const locale = 'en';
-  return {
-    locale,
-    messages: (await import(`@/messages/${locale}.json`)).default
-  };
-});
-```
-
-3. **pages/_app.tsx**
+2. **pages/_app.tsx**
 - Wrap with NextIntlClientProvider
 - inherit local 'en' from router
 - pass pageProps into next page
@@ -97,36 +71,9 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
 }
 
 export default App;
-
-```
-4. **app/**
-Need an app directory in order for _app.tsx to work
-Otherwise you will get:
-> Error: MISSING_MESSAGE: No messages were configured on the provider.
-
-5. **getStaticProps** in your Page.tsx
-```tsx
-import { useTranslations } from "next-intl";
-export default function Home() {
-  const t = useTranslations('HomePage');
-  return (
-    <main>
-      <h1>{t('title')}</h1>
-    </main>
-  );
-}
-
-/* eslint-enable @typescript-eslint/no-explicit-any */
-export async function getStaticProps(context: any) {
-  return {
-    props: {
-      messages: (await import(`@/messages/${context.locale}.json`)).default
-    }
-  };
-}
 ```
 
-6. Example - Using the validation in react-hook-form - **FormRegister.tsx**
+3. Example - Using the validation in react-hook-form - **FormRegister.tsx**
 ```tsx
 import React, { useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -185,6 +132,110 @@ export const FormRegister = () => {
   );
 };
 ```
+4. **getStaticProps** in your Page.tsx
+```tsx
+import { useTranslations } from "next-intl";
+export default function Home() {
+  const t = useTranslations('HomePage');
+  return (
+    <main>
+      <h1>{t('title')}</h1>
+    </main>
+  );
+}
+
+/* eslint-enable @typescript-eslint/no-explicit-any */
+export async function getStaticProps(context: any) {
+  return {
+    props: {
+      messages: (await import(`@/messages/${context.locale}.json`)).default
+    }
+  };
+}
+```
+> Troubleshoot - Pages router = Error: MISSING_MESSAGE: No messages were configured on the provider.
+
+- Ensure you aren't putting a Component inside the _app.tsx, because that will not enable you to use getStaticProps via the page context
+- DON'T DO THIS
+**app.tsx**
+```tsx  
+
+    <NextIntlClientProvider
+      locale={router.locale}
+      timeZone="Europe/London"
+      messages={pageProps.messages}
+    >
+      <SpecificComponentConsumesNextIntlUseTranslations/>
+    </NextIntlClientProvider>
+```
+Instead wrap your pages component with a higher order component...
+**hoc/withMyPageComponent.tsx**
+```ts
+const withMyPageComponent = <P extends object>(
+  SomePageComponent: React.ComponentType<P>
+) => {
+  const WithWrapper = (props: P) => {
+    return (
+      <>
+        <SpecificComponentConsumesNextIntlUseTranslations/>
+        <SomePageComponent {...props} />
+      </>
+    );
+  };
+  return WithWrapper;
+};
+withMyPageComponent.displayType = "hoc";
+
+export default withMyPageComponent;
+
+// use
+// pages/Home.tsx 
+//   const Home = (props: Props) => {}
+//   getStaticProps
+//   export default withMyPageComponent<Props>(Home);
+```
+---------------------------------------------------------------------------
+5. OPTIONAL - if using app router:
+
+- **next.config.ts**
+
+```ts
+import createNextIntlPlugin from 'next-intl/plugin';
+const withNextIntl = createNextIntlPlugin();
+const nextConfig = {
+  i18n: {
+    locales: ['en'],
+    defaultLocale: 'en',
+  },
+};
+
+export default withNextIntl(nextConfig);
+```
+
+- **i18n/request.ts**
+```ts
+import {getRequestConfig} from 'next-intl/server';
+ 
+export default getRequestConfig(async () => {
+  const locale = 'en';
+  return {
+    locale,
+    messages: (await import(`@/messages/${locale}.json`)).default
+  };
+});
+```
+
+
+- **app/**
+Need an app directory in order for _app.tsx to work
+Otherwise you will get:
+> Error: MISSING_MESSAGE: No messages were configured on the provider.
+
+----------------------------------------------------------------------------------------
+# Troubleshoot
+> For either Pages or App router - see:
+[https://next-intl.dev/docs/getting-started/pages-router](https://next-intl.dev/docs/getting-started/pages-router)
+
 
 done. 
 Enjoy!
