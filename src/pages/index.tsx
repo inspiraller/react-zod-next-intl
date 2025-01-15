@@ -1,16 +1,28 @@
-import { useTranslations } from "next-intl";
-import styles from "./page.module.css";
-import Link from "next/link";
+import Head from "next/head";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {useTranslations} from 'next-intl';
+import styles from './Register.module.css';
+import { FormRegister } from "@/components/Form/Implementation/FormRegister/FormRegister";
+const queryClient = new QueryClient();
 
-export default function Home() {
-  const t = useTranslations('HomePage');
+
+export default function Register() {
+  const t = useTranslations('Register');
+  const T_title = t('title');
+
   return (
-    <main className={styles.main}>
-      <h1>{t('title')}</h1>
-      <Link href={'/Register'}>Register</Link>
+    <main>
+      <Head>
+        <title>{T_title}</title>
+      </Head>
+      <QueryClientProvider client={queryClient}>
+        <h1 className={styles.h1}>Register</h1>
+        <FormRegister />
+      </QueryClientProvider>
     </main>
   );
 }
+
 
 export async function getStaticProps(context: any) {
   return {

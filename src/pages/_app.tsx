@@ -4,7 +4,8 @@ import type { NextPage } from "next";
 import "@/app/globals.css";
 import { useRouter } from "next/router";
 import { NextIntlClientProvider } from "next-intl";
-import { AppProps } from "next/app";
+import type { AppProps } from "next/app";
+import { Header } from "@/components/Header/Header";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -24,6 +25,7 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
       timeZone="Europe/London"
       messages={pageProps.messages}
     >
+      <Header {...pageProps} />
       <Component {...pageProps} />
     </NextIntlClientProvider>
   );

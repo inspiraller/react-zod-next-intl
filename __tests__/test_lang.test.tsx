@@ -2,26 +2,23 @@ import { expect, test } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { NextIntlClientProvider } from "next-intl";
-import messages from "@/../messages/en.json";
+import messages from "../src/messages/en.json";
 
 import { Title } from "@/components/Title";
 
 interface Props {
   children: React.ReactNode;
-  locale: 'en'
+  locale: "en";
 }
 
 const WrapProvider = ({ children, locale }: Props) => (
-  <html lang={locale}>
-    <NextIntlClientProvider messages={messages} locale={locale}>
-      {children}
-    </NextIntlClientProvider>
-  </html>
+  <NextIntlClientProvider messages={messages} locale={locale}>
+    {children}
+  </NextIntlClientProvider>
 );
 
 test("loads and displays greeting", async () => {
-  
-const locale = 'en';
+  const locale = "en";
   render(
     <WrapProvider locale={locale}>
       <Title />
