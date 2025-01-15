@@ -1,7 +1,7 @@
 import { PropsFormRegister } from "@/@types";
 import { TranslationValues } from "next-intl";
 import { z, ZodType } from "zod"; // Add new import
-import en from "@/../messages/en.json";
+import en from "@/messages/en.json";
 
 type firstKey = keyof typeof en.zod;
 
