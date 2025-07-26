@@ -2,14 +2,15 @@ import Head from "next/head";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {useTranslations} from 'next-intl';
 import styles from './Register.module.css';
-import { FormRegister } from "@/components/Form/Implementation/FormRegister/FormRegister";
+import { FormExample } from "@/components/FormExample/FormExample";
 import withPageComponent from "@/hocs/withPageComponent";
 const queryClient = new QueryClient();
 
 
-const Register = ()  => {
+const Main = ()  => {
   const t = useTranslations('Register');
   const T_title = t('title');
+  const T_h1 = t('h1');
 
   return (
     <main>
@@ -17,8 +18,8 @@ const Register = ()  => {
         <title>{T_title}</title>
       </Head>
       <QueryClientProvider client={queryClient}>
-        <h1 className={styles.h1}>Register</h1>
-        <FormRegister />
+        <h1 className={styles.h1}>{T_h1}</h1>
+        <FormExample />
       </QueryClientProvider>
     </main>
   );
@@ -35,4 +36,4 @@ export async function getStaticProps(context: any) {
   };
 }
 
-export default withPageComponent(Register);
+export default withPageComponent(Main);

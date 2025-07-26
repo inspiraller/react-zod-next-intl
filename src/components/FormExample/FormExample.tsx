@@ -1,24 +1,27 @@
 import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useValidationSchema } from "./useValidationSchema";
+
+import { useZodSchema } from "./useZodSchema";
 import styles from "@/components/Form/Form.module.css";
 
 import useMutateRegister from "./useMutationRegister";
 import { PropsFormRegister } from "@/@types";
 import { useTranslations } from "next-intl";
+
+import { zodResolver } from "@/zod/zodResolver";
 import { FormInputs } from "./FormInputs/FormInput";
 import { ResponseError } from "./FormResponse/ResponseError";
 import { Success } from "./FormResponse/Success";
 import { Loading } from "./FormResponse/Loading";
 
-export const FormRegister = () => {
-  const tZod = useTranslations("zod");
-  const zodValidationSchema = useValidationSchema(tZod);
+export const FormExample = () => {
+  const t = useTranslations();
+  const zodSchema = useZodSchema(t);
 
   const methods = useForm<PropsFormRegister>({
-    resolver: zodResolver(zodValidationSchema),
+    resolver: zodResolver(zodSchema),
   });
+
   const { handleSubmit } = methods;
 
   const {
@@ -27,16 +30,24 @@ export const FormRegister = () => {
     isSuccess,
     status,
     data: dataResponse,
-    error
+    error,
   } = useMutateRegister();
 
   const onSubmit = (values: PropsFormRegister) => {
+    console.log("handle submit", values);
     mutate(values);
   };
 
-  const isLoading = status === 'pending';
-  console.log("mutate=", {isError, isSuccess, error, dataResponse, status, isLoading});
-  
+  const isLoading = status === "pending";
+  console.log("mutate=", {
+    isError,
+    isSuccess,
+    error,
+    dataResponse,
+    status,
+    isLoading,
+  });
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>

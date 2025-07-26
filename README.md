@@ -1,241 +1,117 @@
 # Summary
-This repo is a simpler version of using zod and useTranslations from next-intl.
-It is generic. That means you don't have to manually create a custom message for each of your validations.
-All you have to do is copy this code structure. If you want a different language version, simply duplicate the en.json file into your language of choice and then follow the guidelines from next-intl to extend your website.
-I created this because the other solutions I found online were overly complicated. 
-I have added notes below to credit those websites I have used for inspiration and copied ideas from.
-Enjoy!
+This repo is an example how to use form validation in React, combining React hook form, Nextjs, Zod 4 with translations.
+It uses zod 4 and takes advantage of its internal locales. There are about 42 of them. React hook form zodResolver breaks with zod 4 so I have a custom polyfill for this.
 
-# Credits to existing implementations online
-- This zod en object was taken from here: https://github.com/gcascio/next-intl-zod
-- react-hook-form with zod validation https://www.freecodecamp.org/news/react-form-validation-zod-react-hook-form/
-
-
-# Installation steps
-1. git clone thisrepo
-2. cd thisrepo
-3. pnpm i
-4. pnpm run dev
-5. Test the validation
-
-# Simplified steps for using zod next intl in your existing application
-0. Install dependencies
-`npm i zod next-intl`
-
-1. **messages/en.json**
+# Basic structure
+## package.json - dependencies
 ```json
-{
-  "HomePage": {
-    "title": "Hello world!"
+  "dependencies": {
+    "@hookform/error-message": "^2.0.1",
+    "i18next": "^25.3.2",
+    "next": "^15.4.4",
+    "next-intl": "^4.3.4",
+    "react-hook-form": "^7.61.1",
+    "zod": "^4.0.13"
   },
-  "zod": {
-    /* Paste latest zod messages here. Example... */
-    "invalid_type": "Expected {expected}, received {received}",
-    "invalid_type_with_path": "{path} is expected {expected}, but received {received}",
-    "invalid_type_received_undefined": "Required",
-  }
-}
-
 ```
-
-2. **pages/_app.tsx**
-- Wrap with NextIntlClientProvider
-- inherit local 'en' from router
-- pass pageProps into next page
-
+## _app.tsx
 ```tsx
-import type { ReactElement, ReactNode } from "react";
-import type { NextPage } from "next";
-import { useRouter } from "next/router";
-import { NextIntlClientProvider } from "next-intl";
-import type { AppProps } from "next/app";
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactElement) => ReactNode;
-};
-
-type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
-};
 
 function App({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
+  let locale =  (router.locale ?? "en") as zodLocale;
+  locale = 'de' // TODO: change to whatever. Proving changing locale updates zod locales
+
   return (
     <NextIntlClientProvider
-      locale={router.locale}
+      locale={locale}
       timeZone="Europe/London"
       messages={pageProps.messages}
     >
-      <Component {...pageProps} />
+      <ZodSetup locale={locale}>
+        {locale ?<Component {...pageProps} /> : 'loading'}
+      </ZodSetup>
     </NextIntlClientProvider>
   );
-}
-
-export default App;
 ```
 
-3. Example - Using the validation in react-hook-form - **FormRegister.tsx**
+## ZodSetup.tsx
 ```tsx
-import React, { useRef } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useValidationSchema } from "./useValidationSchema";
-import { Button } from "@/component/Form/Button/Button";
-import { FormFieldEmail } from "./FormFieldEmail";
-import { FormFieldPassword } from "./FormFieldPassword";
-import { FormFieldConfirmPassword } from "./FormFieldConfirmPassword";
-import { FormFieldUsername } from "./FormFieldUsername";
+// Custom error map function for global translations
 
-import styles from "@/component/Form/Form.module.css";
+import z, { locales } from "zod";
+import { useEffect } from "react";
+import { zodLocale } from "@/@types";
 
-import useMutateRegister from "./useMutationRegister";
-import { PropsFormRegister } from "@/@types";
-import { useTranslations } from "next-intl";
-
-export const FormRegister = () => {
-
-  const tZod = useTranslations('zod');
-
-  const t = useTranslations('Register');
-  const T_legend = t('legend');
-  const T_submit = t('submit');
-
-  const zodValidationSchema = useValidationSchema(tZod);
-
-  const methods = useForm<PropsFormRegister>({
-   resolver: zodResolver(zodValidationSchema),
-  });
-  const { handleSubmit, reset, formState } = methods;
-
-  const onSubmit = (values: PropsFormRegister) => {
-    console.log("submit...");
-    mutate(values);
-  };
-
-  return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>{T_legend}</legend>
-          <FormFieldUsername />
-          <FormFieldEmail />
-          <FormFieldPassword />
-          <FormFieldConfirmPassword />
-        </fieldset>
-
-        <div className={styles.actions}>
-          <Button type="submit" variant="primary">
-            {T_submit}
-          </Button>
-        </div>
-      </form>
-    </FormProvider>
-  );
+interface Props {
+  locale: zodLocale;
+  children: React.ReactNode;
+}
+export const ZodSetup = ({ locale, children }: Props) => {
+  useEffect(() => {
+    if (locale) {
+      const localeError = locales[locale]().localeError; // type: z.core.$ZodErrorMap<z.core.$ZodIssue>;
+      z.config({ localeError });
+    }
+  }, [locale]);
+  return <>{children}</>;
 };
 ```
-4. **getStaticProps** in your Page.tsx
-```tsx
-import { useTranslations } from "next-intl";
-export default function Home() {
-  const t = useTranslations('HomePage');
-  return (
-    <main>
-      <h1>{t('title')}</h1>
-    </main>
-  );
-}
 
-/* eslint-enable @typescript-eslint/no-explicit-any */
-export async function getStaticProps(context: any) {
-  return {
-    props: {
-      messages: (await import(`@/messages/${context.locale}.json`)).default
+## React hook form example
+```tsx
+  const methods = useForm<PropsFormRegister>({
+    resolver: zodResolver(zodValidationSchema),
+  });
+```
+
+## zodResolver.ts
+This is a polyfill for @hookform/resolvers which currently only works with zod 3. 
+I'm sure this will be updated to work with zod 4. In the meantime we can use this
+```tsx
+import type { FieldErrors, FieldValues, ResolverResult, ResolverOptions } from 'react-hook-form';
+import type { ZodType } from 'zod';
+
+export const zodResolver = <T extends FieldValues = FieldValues>(
+  schema: ZodType<T>
+) => {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  return (
+    values: T,
+    _context?: any,
+    _options?: ResolverOptions<T>
+  ): ResolverResult<T> => {
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+    console.log('Custom resolver called with values:', values);
+    
+    const result = schema.safeParse(values);
+    console.log('Schema validation result:', result);
+    
+    if (result.success) {
+      return {
+        values: result.data,
+        errors: {},
+      };
+    } else {
+      const fieldErrors: Record<string, any> = {};
+      
+      result.error.issues.forEach((issue) => {
+        const fieldName = issue.path.join('.');
+        if (fieldName && !fieldErrors[fieldName]) {
+          fieldErrors[fieldName] = {
+            type: issue.code,
+            message: issue.message,
+          };
+        }
+      });
+      
+      console.log('Validation errors:', fieldErrors);
+      
+      return {
+        values: {},
+        errors: fieldErrors as FieldErrors<T>,
+      };
     }
   };
-}
-```
-> Troubleshoot - Pages router = Error: MISSING_MESSAGE: No messages were configured on the provider.
-
-- Ensure you aren't putting a Component inside the _app.tsx, because that will not enable you to use getStaticProps via the page context
-- DON'T DO THIS
-**app.tsx**
-```tsx  
-
-    <NextIntlClientProvider
-      locale={router.locale}
-      timeZone="Europe/London"
-      messages={pageProps.messages}
-    >
-      <SpecificComponentConsumesNextIntlUseTranslations/>
-    </NextIntlClientProvider>
-```
-Instead wrap your pages component with a higher order component...
-**hoc/withMyPageComponent.tsx**
-```ts
-const withMyPageComponent = <P extends object>(
-  SomePageComponent: React.ComponentType<P>
-) => {
-  const WithWrapper = (props: P) => {
-    return (
-      <>
-        <SpecificComponentConsumesNextIntlUseTranslations/>
-        <SomePageComponent {...props} />
-      </>
-    );
-  };
-  return WithWrapper;
 };
-withMyPageComponent.displayType = "hoc";
-
-export default withMyPageComponent;
-
-// use
-// pages/Home.tsx 
-//   const Home = (props: Props) => {}
-//   getStaticProps
-//   export default withMyPageComponent<Props>(Home);
 ```
----------------------------------------------------------------------------
-5. OPTIONAL - if using app router:
-
-- **next.config.ts**
-
-```ts
-import createNextIntlPlugin from 'next-intl/plugin';
-const withNextIntl = createNextIntlPlugin();
-const nextConfig = {
-  i18n: {
-    locales: ['en'],
-    defaultLocale: 'en',
-  },
-};
-
-export default withNextIntl(nextConfig);
-```
-
-- **i18n/request.ts**
-```ts
-import {getRequestConfig} from 'next-intl/server';
- 
-export default getRequestConfig(async () => {
-  const locale = 'en';
-  return {
-    locale,
-    messages: (await import(`@/messages/${locale}.json`)).default
-  };
-});
-```
-
-
-- **app/**
-Need an app directory in order for _app.tsx to work
-Otherwise you will get:
-> Error: MISSING_MESSAGE: No messages were configured on the provider.
-
-----------------------------------------------------------------------------------------
-# Troubleshoot
-> For either Pages or App router - see:
-[https://next-intl.dev/docs/getting-started/pages-router](https://next-intl.dev/docs/getting-started/pages-router)
-
-
-done. 
-Enjoy!
