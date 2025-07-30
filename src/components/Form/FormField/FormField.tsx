@@ -21,7 +21,7 @@ const FormField = (props: FormFieldProps) => {
   return (
     <div className={styles.row}>
       <label htmlFor={id} className={styles.label}>
-        <span className="form-label">{label}:</span>
+        <span className="form-label">{label}</span>
       </label>
       <input
         id={id}

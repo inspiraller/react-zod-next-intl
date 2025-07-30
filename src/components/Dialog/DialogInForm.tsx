@@ -18,7 +18,6 @@ export const DialogInForm = ({ id, isShow, handleClose, children, className }: P
   const [show, setShow] = useState<boolean | undefined>(isShow);
   
   const handleClick = () => {
-    console.log('handleClick of close button ???')
     handleClose?.();
     setShow(prev => !prev);
   }

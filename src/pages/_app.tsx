@@ -1,10 +1,12 @@
-import type { ReactElement, ReactNode } from "react";
+import { type ReactElement, type ReactNode } from "react";
 import type { NextPage } from "next";
 
 import "./globals.css";
 import { useRouter } from "next/router";
 import { NextIntlClientProvider } from "next-intl";
 import type { AppProps } from "next/app";
+import { ZodSetup } from "@/zod/ZodSetup";
+import { zodLocale } from "@/@types";
 
 export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -16,7 +18,8 @@ type AppPropsWithLayout = AppProps & {
 
 function App({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
-  const locale = router.locale ?? "en";
+  const locale =  (router.locale ?? "en") as zodLocale;
+  //const locale = 'de' // TODO: change to whatever. Proving changing locale updates zod locales
 
   return (
     <NextIntlClientProvider
@@ -24,7 +27,9 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
       timeZone="Europe/London"
       messages={pageProps.messages}
     >
-      <Component {...pageProps} />
+      <ZodSetup locale={locale}>
+        {locale ?<Component {...pageProps} /> : 'loading'}
+      </ZodSetup>
     </NextIntlClientProvider>
   );
 }
