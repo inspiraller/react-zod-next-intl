@@ -12,10 +12,9 @@ export const zodResolver = <T extends FieldValues = FieldValues>(
     _options?: ResolverOptions<T>
   ): ResolverResult<T> => {
       /* eslint-enable @typescript-eslint/no-unused-vars */
-    console.log('Custom resolver called with values:', values);
-    
+
     const result = schema.safeParse(values);
-    console.log('Schema validation result:', result);
+
     
     if (result.success) {
       return {
@@ -35,7 +34,7 @@ export const zodResolver = <T extends FieldValues = FieldValues>(
         }
       });
       
-      console.log('Validation errors:', fieldErrors);
+      // console.log('Validation errors:', fieldErrors);
       
       return {
         values: {},

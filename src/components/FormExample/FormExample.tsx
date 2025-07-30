@@ -29,7 +29,6 @@ export const FormExample = () => {
     isError,
     isSuccess,
     status,
-    data: dataResponse,
     error,
   } = useMutateRegister();
 
@@ -38,15 +37,9 @@ export const FormExample = () => {
     mutate(values);
   };
 
+  console.log('isLoading..')
   const isLoading = status === "pending";
-  console.log("mutate=", {
-    isError,
-    isSuccess,
-    error,
-    dataResponse,
-    status,
-    isLoading,
-  });
+
 
   return (
     <FormProvider {...methods}>

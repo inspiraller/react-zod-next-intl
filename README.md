@@ -1,6 +1,12 @@
 # Summary
-This repo is an example how to use form validation in React, combining React hook form, Nextjs, Zod 4 with translations.
-It uses zod 4 and takes advantage of its internal locales. There are about 42 of them. React hook form zodResolver breaks with zod 4 so I have a custom polyfill for this.
+This repo is an example of how to use form validation in React, combining: 
+- React hook form
+- Nextjs
+- Zod 4 
+- Locale Translations
+It uses zod 4 and takes advantage of its internal locales. There are about 42 of them. 
+React hook form zodResolver currently only works with zod 3. 
+This repo contains a custom polyfill to temporarily replace this, until they update it.
 
 # Basic structure
 ## package.json - dependencies
@@ -38,7 +44,6 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
 ## ZodSetup.tsx
 ```tsx
 // Custom error map function for global translations
-
 import z, { locales } from "zod";
 import { useEffect } from "react";
 import { zodLocale } from "@/@types";
@@ -82,11 +87,7 @@ export const zodResolver = <T extends FieldValues = FieldValues>(
     _options?: ResolverOptions<T>
   ): ResolverResult<T> => {
       /* eslint-enable @typescript-eslint/no-unused-vars */
-    console.log('Custom resolver called with values:', values);
-    
     const result = schema.safeParse(values);
-    console.log('Schema validation result:', result);
-    
     if (result.success) {
       return {
         values: result.data,
@@ -104,9 +105,6 @@ export const zodResolver = <T extends FieldValues = FieldValues>(
           };
         }
       });
-      
-      console.log('Validation errors:', fieldErrors);
-      
       return {
         values: {},
         errors: fieldErrors as FieldErrors<T>,

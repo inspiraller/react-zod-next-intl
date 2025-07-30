@@ -18,8 +18,8 @@ type AppPropsWithLayout = AppProps & {
 
 function App({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
-  let locale =  (router.locale ?? "en") as zodLocale;
-  locale = 'de' // TODO: change to whatever. Proving changing locale updates zod locales
+  const locale =  (router.locale ?? "en") as zodLocale;
+  //const locale = 'de' // TODO: change to whatever. Proving changing locale updates zod locales
 
   return (
     <NextIntlClientProvider
